@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head> <meta charset="UTF-8" />
+  <title>Stylish Text Tool</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-size: cover;
+      background-position: center;
+      z-index: -1;
+      animation: slideShow 30s infinite;
+    }
+
+    @keyframes slideShow {
+      0%   { background-image: url('https://picsum.photos/id/1015/1920/1080'); }
+      25%  { background-image: url('https://picsum.photos/id/1016/1920/1080'); }
+      50%  { background-image: url('https://picsum.photos/id/1025/1920/1080'); }
+      75%  { background-image: url('https://picsum.photos/id/1043/1920/1080'); }
+      100% { background-image: url('https://picsum.photos/id/1015/1920/1080'); }
+    }
+
+    .tool-container {
+      background: linear-gradient(45deg, red, orange, yellow);
+      background-size: 300% 300%;
+      animation: boxColorShift 8s ease infinite;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 800px;
+      width: 95%;
+      box-shadow: 0 0 25px rgba(0,0,0,0.6);
+      color: #fff;
+      text-align: center;
+      backdrop-filter: blur(8px);
+    }
+
+    @keyframes boxColorShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    input, select, button {
+      padding: 14px;
+      font-size: 16px;
+      width: 90%;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    input, select {
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    button {
+      background: linear-gradient(45deg, #6a5acd, #00bfff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #7b68ee, #1ecbe1);
+    }
+
+    .preview {
+      font-size: 30px;
+      font-weight: bold;
+      margin: 20px 0;
+      min-height: 50px;
+      word-wrap: break-word;
+      background: linear-gradient(270deg, #ff00cc, #3333ff, #00ffcc, #ffcc00);
+      background-size: 800% 800%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: gradientMove 10s ease infinite;
+    }
+
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .symbol-box {
+      display: none;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .symbol {
+      font-size: 20px;
+      margin: 5px;
+      padding: 10px;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      transition: 0.2s ease;
+    }
+
+    .symbol:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="tool-container">
+    <h1>STYLISH TEXT TOOL</h1>
+    <input type="text" id="nameInput" placeholder="Enter your name or by indo...">
+    <select id="fontSelector"></select>
+    <button onclick="toggleSymbols()">Choose Symbols</button>
+    <div class="symbol-box" id="symbolBox"></div>
+    <div class="preview" id="preview">Your Stylish Text Will Appear Here</div>
+    <button onclick="copyToClipboard()">ð Copy Stylish Text</button>
+  </div>
+
+  <script>
+    const symbolList = [ "â","â","â","â","â¯","â®","â ","â£","â¥","â¦","âª","â«","â","â","â","â","â¿","â¡","â","â","â","â","â¾","â½","â","â","â","â","â£","âª","â¦","â§","â©","â¬","â°","â","â½","â¾","â³","âµ","â","â","â","â","â","â","â","â¿","â ","â¢","â£","â¨","â","â","â","â","â","â°","â³","â","â","âº","ð","ð","ð","ð¥","ð§","ð","ð¹","ðº","ð¸","ð»","ð","ð","ð","ð","ð","ð","ð","ð¶","ðµ","ð§","ð¤","ð¼","ð","ð¯","ð®","ð²","ð","â","ð","ð","ð","ð","ð","ð¼","ð","ð"];
+
+    const unicodeFonts = [
+      { name: "Normal", map: c => c },
+      { name: "Bold", map: c => mapChar(c, 0x1D400, 0x1D41A) },
+      { name: "Italic", map: c => mapChar(c, 0x1D434, 0x1D44E) },
+      { name: "Bold Italic", map: c => mapChar(c, 0x1D468, 0x1D482) },
+      { name: "Script", map: c => mapChar(c, 0x1D49C, 0x1D4B6) },
+      { name: "Fraktur", map: c => mapChar(c, 0x1D504, 0x1D51E) },
+      { name: "Double-struck", map: c => mapChar(c, 0x1D538, 0x1D552) },
+      { name: "Sans Serif", map: c => mapChar(c, 0x1D5A0, 0x1D5BA) },
+      { name: "Sans Bold", map: c => mapChar(c, 0x1D5D4, 0x1D5EE) },
+      { name: "Monospace", map: c => mapChar(c, 0x1D670, 0x1D68A) },
+      { name: "Small Caps", map: c => smallCaps },
+      { name: "Cursive Mix", map: c => cursiveAlt(c) },
+    ];
+
+    while (unicodeFonts.length < 100) {
+      unicodeFonts.push({ name: `Style ${unicodeFonts.length + 1}`, map: unicodeFonts[unicodeFonts.length % 10].map });
+    }
+
+    function mapChar(char, upperStart, lowerStart) {
+      const code = char.charCodeAt(0);
+      if (code >= 65 && code <= 90) return String.fromCodePoint(upperStart + (code - 65));
+      if (code >= 97 && code <= 122) return String.fromCodePoint(lowerStart + (code - 97));
+      return char;
+    }
+
+    function smallCaps(char) {
+      const table = {
+        a: 'á´', b: 'Ê', c: 'á´', d: 'á´', e: 'á´', f: 'ê°', g: 'É¢', h: 'Ê', i: 'Éª', j: 'á´',
+        k: 'á´', l: 'Ê', m: 'á´', n: 'É´', o: 'á´', p: 'á´', q: 'Ç«', r: 'Ê', s: 's', t: 'á´',
+        u: 'á´', v: 'á´ ', w: 'á´¡', x: 'x', y: 'Ê', z: 'á´¢'
+      };
+      return table[char.toLowerCase()] || char;
+    }
+
+    function cursiveAlt(char) {
+      const table = {
+        A: "ð", B: "ð", C: "ð", D: "ð", E: "ð", F: "ð", G: "ð", H: "ð", I: "ð", J: "ð",
+        K: "ð", L: "ð", M: "ð", N: "ð", O: "ð", P: "ð", Q: "ð ", R: "ð¡", S: "ð¢", T: "ð£",
+        U: "ð¤", V: "ð¥", W: "ð¦", X: "ð§", Y: "ð¨", Z: "ð©",
+        a: "ðª", b: "ð«", c: "ð¬", d: "ð­", e: "ð®", f: "ð¯", g: "ð°", h: "ð±", i: "ð²", j: "ð³",
+        k: "ð´", l: "ðµ", m: "ð¶", n: "ð·", o: "ð¸", p: "ð¹", q: "ðº", r: "ð»", s: "ð¼", t: "ð½",
+        u: "ð¾", v: "ð¿", w: "ð", x: "ð", y: "ð", z: "ð"
+      };
+      return table[char] || char;
+    }
+
+    const fontSelector = document.getElementById("fontSelector");
+    unicodeFonts.forEach((font, i) => {
+      const option = document.createElement("option");
+      option.value = i;
+      option.textContent = `${i + 1}. ${font.name}`;
+      fontSelector.appendChild(option);
+    });
+
+    const symbolBox = document.getElementById("symbolBox");
+    symbolList.forEach(symbol => {
+      const span = document.createElement("span");
+      span.className = "symbol";
+      span.textContent = symbol;
+      span.onclick = () => {
+        document.getElementById("nameInput").value += symbol;
+        updatePreview();
+      };
+      symbolBox.appendChild(span);
+    });
+
+    function toggleSymbols() {
+      symbolBox.style.display = symbolBox.style.display === "none" ? "flex" : "none";
+    }
+
+    function transformText(text, styleIndex) {
+      const mapFn = unicodeFonts[styleIndex].map;
+      return text.split("").map(mapFn).join("");
+    }
+
+    function updatePreview() {
+      const input = document.getElementById("nameInput").value;
+      const fontIndex = parseInt(document.getElementById("fontSelector").value);
+      const styled = transformText(input, fontIndex);
+      document.getElementById("preview").textContent = styled || "Your Stylish Text Will Appear Here";
+    }
+
+    function copyToClipboard() {
+      const styled = document.getElementById("preview").textContent;
+      navigator.clipboard.writeText(styled).then(() => {
+        alert("Copied to clipboard!");
+      });
+    }
+
+    document.getElementById("nameInput").addEventListener("input", updatePreview);
+    document.getElementById("fontSelector").addEventListener("change", updatePreview);
+    updatePreview();
+  </script>
+</body>
+</html>
+>

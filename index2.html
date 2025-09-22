@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Photo Filter Editor</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+    }
+
+    video.bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    header {
+      background: rgba(0, 0, 0, 0.6);
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+      font-size: 1.5rem;
+      z-index: 2;
+      position: relative;
+    }
+
+    .main-content {
+      display: flex;
+      height: calc(100% - 100px);
+      position: relative;
+      z-index: 2;
+    }
+
+    .left {
+      width: 55%;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(5px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .right {
+      width: 45%;
+      padding: 20px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    input[type="file"] {
+      margin-bottom: 20px;
+      padding: 8px;
+      font-size: 1rem;
+    }
+
+    #previewImage {
+      width: 90%;
+      height: auto;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 10px;
+      display: none;
+      transition: filter 0.3s ease;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      max-height: 65vh;
+      overflow-y: auto;
+    }
+
+    .filters button {
+      padding: 10px;
+      font-size: 14px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(270deg, #4f46e5, #06b6d4, #10b981, #f59e0b);
+      background-size: 800% 800%;
+      animation: gradientGlow 6s ease infinite;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+    }
+
+    .filters button:hover {
+      transform: scale(1.06);
+      box-shadow: 0 0 20px #10b981;
+    }
+
+    .filters button.active {
+      background: linear-gradient(270deg, #10b981, #06b6d4);
+      box-shadow: 0 0 15px #10b981, 0 0 10px #06b6d4;
+    }
+
+    .download-btn {
+      margin-top: 20px;
+      padding: 12px 20px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .download-btn:hover {
+      background: #059669;
+    }
+
+    canvas { display: none; }
+
+    @keyframes gradientGlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+  </style>
+</head>
+<body>
+
+<video class="bg-video" autoplay muted loop>
+  <source src="https://files.catbox.moe/dlxz5b.mp4" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
+<header>
+  <h1><i class="fas fa-magic"></i>INDO"S PHOTO FILTER EDITOR</h1>
+  <p>Upload an image, apply animated filters, and download your result.</p>
+</header>
+
+<div class="main-content">
+  <div class="left">
+    <input type="file" id="uploadInput" accept="image/*" onchange="loadImage(event)">
+    <img id="previewImage" />
+    <button class="download-btn" id="downloadBtn" onclick="downloadImage()" style="display:none;">
+      <i class="fas fa-download"></i> Download Image
+    </button>
+    <canvas id="canvas"></canvas>
+  </div>
+  <div class="right">
+    <div class="filters" id="filterButtons"></div>
+  </div>
+</div>
+
+<script>
+  const previewImage = document.getElementById('previewImage');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  let currentFilter = 'none';
+
+  const filtersList = {
+    'Normal': 'none',
+    'Grayscale': 'grayscale(100%)',
+    'Sepia': 'sepia(100%)',
+    'Invert': 'invert(100%)',
+    'Blur': 'blur(3px)',
+    'Brightness Up': 'brightness(150%)',
+    'Brightness Down': 'brightness(80%)',
+    'Contrast Up': 'contrast(150%)',
+    'Contrast Down': 'contrast(70%)',
+    'Saturate Up': 'saturate(200%)',
+    'Saturate Down': 'saturate(50%)',
+    'Hue 90Â°': 'hue-rotate(90deg)',
+    'Hue 180Â°': 'hue-rotate(180deg)',
+    'Hue 270Â°': 'hue-rotate(270deg)',
+    'Shadow Tone': 'brightness(70%) contrast(120%)',
+    'Washed': 'sepia(30%) brightness(120%)',
+    'Blue Shift': 'hue-rotate(200deg) saturate(150%)',
+    'Cool Tone': 'hue-rotate(180deg) brightness(110%)',
+    'Warm Tone': 'sepia(80%) saturate(130%)',
+    'B&W High Contrast': 'grayscale(100%) contrast(200%)',
+    'Light Fade': 'brightness(120%) contrast(85%)',
+    'Deep Vintage': 'sepia(60%) contrast(90%)',
+    'Drama': 'contrast(160%) saturate(120%)',
+    'HDR Effect': 'contrast(180%) brightness(110%)',
+    'Soft Pastel': 'brightness(110%) saturate(120%) hue-rotate(60deg)',
+    'Sharp Tone': 'contrast(190%)',
+    'Yellow Boost': 'hue-rotate(40deg) saturate(140%)',
+    'Purple Glitch': 'hue-rotate(300deg) saturate(160%)',
+    'Dreamy': 'blur(2px) brightness(110%)',
+    'Film Look': 'sepia(30%) contrast(130%) brightness(90%)',
+    'Retro': 'sepia(70%) contrast(110%) brightness(90%)',
+    'Faded Film': 'grayscale(30%) brightness(105%)',
+    'Cinematic': 'contrast(140%) brightness(95%)',
+    'Noir': 'grayscale(100%) brightness(70%)',
+    'Sky Pop': 'saturate(200%) hue-rotate(210deg)',
+    'Forest': 'hue-rotate(100deg) brightness(90%)',
+    'Ocean': 'hue-rotate(190deg) saturate(140%)',
+    'Darkened': 'brightness(70%) contrast(110%)',
+    'Glow': 'brightness(140%) blur(1px)',
+    'Matte': 'contrast(85%) brightness(95%)',
+    'Sharp Blur': 'blur(1px) contrast(160%)',
+    'Black Soft': 'grayscale(100%) brightness(90%)',
+    'Cold Breeze': 'hue-rotate(180deg) contrast(90%)',
+    'Highlight Boost': 'brightness(130%) contrast(120%)',
+    'Muted': 'contrast(80%) saturate(60%)',
+    'Night Mode': 'brightness(60%) contrast(110%)',
+    'Sunset': 'hue-rotate(20deg) saturate(180%)',
+    'Tropical': 'hue-rotate(160deg) saturate(180%) brightness(110%)',
+    'X-ray': 'invert(100%) brightness(120%)',
+    'Radiant': 'brightness(150%) saturate(180%)',
+    'Deep Black': 'grayscale(100%) contrast(200%) brightness(70%)'
+  };
+
+  function loadImage(event) {
+    const file = event.target.files[0];
+    if (!file || !file.type.startsWith('image')) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      previewImage.src = e.target.result;
+      previewImage.style.display = 'block';
+      document.getElementById('downloadBtn').style.display = 'inline-block';
+      generateFilterButtons();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function generateFilterButtons() {
+    const filterContainer = document.getElementById('filterButtons');
+    filterContainer.innerHTML = '';
+    for (let name in filtersList) {
+      const btn = document.createElement('button');
+      btn.innerText = name;
+      btn.onclick = function () {
+        applyFilter(filtersList[name], btn);
+      };
+      filterContainer.appendChild(btn);
+    }
+  }
+
+  function applyFilter(filter, button) {
+    currentFilter = filter;
+    previewImage.style.filter = filter;
+    document.querySelectorAll('.filters button').forEach(b => b.classList.remove('active'));
+    button.classList.add('active');
+  }
+
+  function downloadImage() {
+    const img = new Image();
+    img.src = previewImage.src;
+    img.crossOrigin = 'anonymous';
+    img.onload = function () {
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.filter = currentFilter;
+      ctx.drawImage(img, 0, 0);
+      const link = document.createElement('a');
+      link.download = 'filtered-image.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    };
+  }
+</script>
+
+</body>
+</html>

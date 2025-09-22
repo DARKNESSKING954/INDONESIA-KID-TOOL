@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Code Sniffer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      font-family: 'Orbitron', monospace;
+      color: #00ffcc;
+      overflow-x: hidden;
+    }
+
+    #bg-video {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      filter: brightness(0.3) contrast(1.2) blur(2px);
+      z-index: -1;
+    }
+
+    .content-wrapper {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #000000aa 0%, #0a0f1aaa 100%);
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: #0a0f1a;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ffcc44;
+      text-align: center;
+    }
+
+    h1 {
+      text-shadow: 0 0 5px #00ffcc, 0 0 10px #00ffcc;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #00ffcc;
+      border-radius: 8px;
+      background: #000;
+      color: #00ffcc;
+      font-size: 16px;
+      outline: none;
+      margin-bottom: 15px;
+    }
+
+    button, .btn-link {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    button {
+      background: #00ffcc;
+      color: #000;
+    }
+
+    button:hover {
+      background: #00ffaa;
+      box-shadow: 0 0 10px #00ffaa;
+    }
+
+    .btn-link {
+      color: #fff;
+    }
+
+    .channel1 {
+      background: linear-gradient(90deg, #ff0080, #ff8c00);
+      animation: glow1 4s infinite alternate;
+    }
+
+    .channel2 {
+      background: linear-gradient(90deg, #00f0ff, #00ff88);
+      animation: glow2 4s infinite alternate;
+    }
+
+    .contact {
+      background: linear-gradient(90deg, #8a2be2, #ff1493);
+      animation: glow3 4s infinite alternate;
+    }
+
+    @keyframes glow1 {
+      from { box-shadow: 0 0 10px #ff0080; }
+      to { box-shadow: 0 0 20px #ff8c00; }
+    }
+    @keyframes glow2 {
+      from { box-shadow: 0 0 10px #00f0ff; }
+      to { box-shadow: 0 0 20px #00ff88; }
+    }
+    @keyframes glow3 {
+      from { box-shadow: 0 0 10px #8a2be2; }
+      to { box-shadow: 0 0 20px #ff1493; }
+    }
+
+    .links-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    @media (min-width: 600px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+      .links-group {
+        flex-direction: row;
+      }
+    }
+
+    pre {
+      background: #000;
+      color: #00ffcc;
+      border: 1px solid #00ffcc33;
+      padding: 15px;
+      border-radius: 10px;
+      max-height: 50vh;
+      overflow: auto;
+      white-space: pre-wrap;
+      box-shadow: inset 0 0 15px #00ffcc33;
+      text-align: left;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 12px;
+      background: #000000cc;
+      font-size: 13px;
+      color: #00ffcc;
+      border-top: 1px solid #00ffcc33;
+      width: 100%;
+    }
+
+    .footer a {
+      color: #00ffcc;
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <video autoplay muted loop id="bg-video">
+    <source src="https://files.catbox.moe/yuhyp5.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <div class="content-wrapper">
+    <div class="container">
+      <h1>HTML Code Viewer</h1>
+      <input id="url" type="text" placeholder="Paste any URL (e.g. https://indo-x-toolkit.vercel.app)" />
+      <button onclick="getSource()">Steal Code</button>
+
+      <div class="links-group">
+        <a href="https://whatsapp.com/channel/0029Vb66xCY1iUxVDO4zAO2L" target="_blank" class="btn-link channel1">Join Main Channel</a>
+        <a href="https://whatsapp.com/channel/0029Vb4HUnJAjPXOWnELU82J" target="_blank" class="btn-link channel2">Join 2nd Channel</a>
+        <a href="https://wa.me/27665321966" target="_blank" class="btn-link contact"> Contact Developer</a>
+      </div>
+
+      <pre id="output">Enter a URL above and click the button to view its source code...</pre>
+    </div>
+  </div>
+
+  <div class="footer">
+     Built for dev learning by <a href="#">INDONESIA KID</a> Use responsibly
+  </div>
+
+  <script>
+    async function getSource() {
+      const url = document.getElementById("url").value.trim();
+      const output = document.getElementById("output");
+
+      if (!url) {
+        output.textContent = "â Error: No URL provided. Please enter a valid link.";
+        return;
+      }
+
+      output.textContent = "Fetching source code... â";
+
+      try {
+        const proxy = "https://api.allorigins.win/raw?url=" + encodeURIComponent(url);
+        const response = await fetch(proxy);
+        const html = await response.text();
+        output.textContent = html;
+      } catch (err) {
+        output.textContent = " Error fetching source code. Make sure the URL is correct and CORS is allowed.";
+      }
+    }
+  </script>
+
+</body>
+</html>

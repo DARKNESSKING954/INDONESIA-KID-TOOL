@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDONESIA KID's - FREE PANEL GEN</title>
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- JSZip Library for REAL unzipping -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    
+    <style>
+        /* --- THEME DEFINITIONS --- */
+        :root { /* Default Omega Theme */
+            --bg-darker: #111827; --bg-dark: #1F2937; --bg-light: #374151; --bg-console: #10141a;
+            --border-color: #4B5563; --text-primary: #F9FAFB; --text-secondary: #9CA3AF;
+            --accent-blue: #3b82f6; --accent-green: #22c55e; --accent-red: #ef4444; --accent-yellow: #eab308;
+            --console-glow: transparent;
+        }
+        body.theme-cybernetic { /* Cybernetic Theme */
+            --bg-darker: #0d0520; --bg-dark: #1a0f35; --bg-light: #2c1a55; --bg-console: #0c041d;
+            --border-color: #432a7e; --text-primary: #f0eaff; --text-secondary: #a191d4;
+            --accent-blue: #00e5ff; --accent-green: #ff00ea; --accent-red: #ff3366; --accent-yellow: #fce83a;
+            --console-glow: rgba(0, 229, 255, 0.15);
+        }
+
+        /* --- GLOBAL STYLES & ANIMATIONS --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { font-size: 16px; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-darker); color: var(--text-primary); overflow: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
+        .screen { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; opacity: 0; transition: opacity 0.3s ease-in-out; pointer-events: none; }
+        .screen.active { opacity: 1; pointer-events: auto; }
+        .screen.center-content { justify-content: center; align-items: center; }
+        .screen.flex-row { flex-direction: row; justify-content: flex-start; align-items: stretch; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .new-log { animation: fadeIn 0.4s ease-out; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        .fa-spin { animation: spin 1.5s linear infinite; }
+
+        /* --- TROUBLESHOOT BUTTON --- */
+        #troubleshoot-link { position: fixed; bottom: 1.5rem; right: 1.5rem; background-color: #25D366; color: white; padding: 0.75rem 1.25rem; border-radius: 50px; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 0.75rem; z-index: 1001; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        #troubleshoot-link:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        #troubleshoot-link .fa-whatsapp { font-size: 1.5rem; }
+        #auth-screen.active ~ #troubleshoot-link { display: none; }
+        
+        /* --- AUTH SCREEN --- */
+        #login-container { background-color: var(--bg-dark); padding: 2.5rem; border-radius: 0.5rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); width: 100%; max-width: 420px; text-align: center; border: 1px solid var(--border-color); }
+        .login-logo { color: var(--accent-blue); font-size: 3rem; margin-bottom: 1rem; }
+        .input-group { margin-bottom: 1.25rem; text-align: left; }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-size: 0.875rem; font-weight: 500; color: var(--text-secondary); }
+        .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 0.75rem 1rem; background-color: var(--bg-light); border: 1px solid var(--border-color); border-radius: 0.375rem; color: var(--text-primary); font-size: 1rem; font-family: 'Inter', sans-serif; }
+        .input-group textarea { resize: vertical; min-height: 150px; font-family: 'Fira Code', monospace; }
+        #login-error { color: var(--accent-red); margin-top: 1rem; min-height: 1.25rem; font-size: 0.875rem; }
+        .auth-toggle-link { color: var(--accent-blue); text-decoration: none; font-size: 0.875rem; margin-top: 1.5rem; display: inline-block; cursor: pointer; }
+        
+        /* --- GENERAL UI & BUTTONS --- */
+        .btn { padding: 0.625rem 1.25rem; border: none; border-radius: 0.375rem; cursor: pointer; font-weight: 600; font-size: 0.875rem; transition: all 0.2s; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn:hover:not([disabled]) { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2), 0 2px 4px -1px rgba(0,0,0,0.1); }
+        .btn[disabled] { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
+        .btn-primary { background-color: var(--accent-blue); color: var(--text-primary); } .btn-success { background-color: var(--accent-green); color: var(--text-primary); } .btn-danger { background-color: var(--accent-red); color: var(--text-primary); } .btn-secondary { background-color: var(--bg-light); color: var(--text-primary); }
+        
+        /* --- SIDEBAR & COLLAPSE LOGIC --- */
+        .sidebar { width: 250px; background-color: var(--bg-dark); padding: 1.5rem; display: flex; flex-direction: column; border-right: 1px solid var(--border-color); flex-shrink: 0; transition: width 0.3s ease, padding 0.3s ease, border-width 0.3s ease; overflow: hidden; }
+        .screen.sidebar-collapsed .sidebar { width: 0; padding-left: 0; padding-right: 0; border-right-width: 0; }
+        .toggle-sidebar-btn { padding: 0.75rem; flex-shrink: 0; }
+        .logo { display: flex; align-items: center; gap: 0.75rem; color: var(--accent-blue); font-size: 1.5rem; font-weight: 600; margin-bottom: 2.5rem; white-space: nowrap; }
+        .sidebar nav a { display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); text-decoration: none; padding: 0.875rem 1rem; border-radius: 0.375rem; margin-bottom: 0.5rem; font-weight: 500; transition: background-color 0.2s, color 0.2s; white-space: nowrap; }
+        .sidebar .user-info { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border-color); white-space: nowrap; }
+        #user-email-display { font-weight: 500; word-break: break-all; margin-bottom: 0.75rem; }
+        .user-actions { display: flex; gap: 0.5rem; }
+        #logout-button { flex-grow: 1; }
+        
+        /* --- MAIN CONTENT & SERVER CARDS --- */
+        .content-area { flex-grow: 1; padding: 2.5rem; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        #server-list-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .server-card { background-color: var(--bg-dark); border-radius: 0.5rem; padding: 1.5rem; border-left: 5px solid; transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s; cursor: pointer; }
+        .server-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2); }
+        .server-card.status-running { border-color: var(--accent-green); } .server-card.status-stopped { border-color: var(--accent-red); } .server-card.status-starting, .server-card.status-installing { border-color: var(--accent-yellow); }
+        .status { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; text-transform: capitalize; font-weight: 500; }
+        
+        /* --- SERVER DETAIL & TABS --- */
+        #detail-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+        #detail-main { display: flex; flex-direction: column; flex-grow: 1; gap: 1.5rem; overflow: hidden; height: calc(100% - 100px); }
+        #detail-controls { display: flex; gap: 1rem; flex-wrap: wrap; }
+        #server-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 1.5rem; }
+        .tab-link { padding: 0.75rem 1.5rem; color: var(--text-secondary); text-decoration: none; font-weight: 500; border-bottom: 3px solid transparent; transition: all 0.2s; cursor: pointer; }
+        .tab-link:hover { color: var(--text-primary); } .tab-link.active { color: var(--text-primary); border-bottom-color: var(--accent-blue); }
+        #tab-content-container { display: flex; flex-direction: column; flex-grow: 1; overflow: hidden; }
+        .tab-content { display: none; flex-grow: 1; flex-direction: column; overflow: hidden; }
+        .tab-content.active { display: flex; }
+        
+        /* --- ENHANCED CONSOLE --- */
+        #console-wrapper { position: relative; flex-grow: 1; display: flex; flex-direction: column; }
+        #console-container { flex-grow: 1; background-color: var(--bg-console); border: 1px solid var(--border-color); border-bottom-left-radius: 0; border-bottom-right-radius: 0; padding: 1rem; font-family: 'Fira Code', monospace; font-size: 0.875rem; overflow-y: auto; white-space: pre-wrap; word-break: break-all; position: relative; }
+        .log-line { line-height: 1.6; text-shadow: 0 0 5px var(--console-glow); } .log-line.info { color: #e0e0e0; } .log-line.warn { color: var(--accent-yellow); } .log-line.error { color: var(--accent-red); } .log-line.success { color: var(--accent-green); } .log-line.command { color: var(--accent-blue); }
+        .log-time { color: var(--text-secondary); margin-right: 1rem; }
+        #console-container::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.05) 50%, rgba(255,255,255,0)); animation: scan 7s linear infinite; pointer-events: none; }
+        @keyframes scan { to { transform: translateY(100vh); } }
+        #console-input-container { display: flex; align-items: center; background-color: var(--bg-console); border: 1px solid var(--border-color); border-top: none; padding: 0.5rem 1rem; border-bottom-left-radius: 0.5rem; border-bottom-right-radius: 0.5rem; flex-shrink: 0; }
+        #console-input { flex-grow: 1; background-color: transparent; border: none; outline: none; color: var(--text-primary); font-family: 'Fira Code', monospace; font-size: 0.875rem; }
+        
+        /* --- FILE MANAGER & SCHEDULES --- */
+        #file-manager-header { display: flex; justify-content: flex-end; gap: 0.75rem; margin-bottom: 1rem; }
+        #file-list-container, #schedule-list-container { flex-grow: 1; background-color: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 0.5rem; overflow-y: auto; }
+        .file-row, .schedule-row { display: flex; align-items: center; padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--border-color); gap: 1rem; }
+        .file-row:last-child, .schedule-row:last-child { border-bottom: none; }
+        .file-icon { width: 20px; text-align: center; color: var(--text-secondary); }
+        .file-name, .schedule-cron, .schedule-task { flex-grow: 1; font-weight: 500; }
+        .file-size, .file-modified { color: var(--text-secondary); font-size: 0.875rem; width: 120px; text-align: right; flex-shrink: 0; }
+        .file-actions, .schedule-actions { display: flex; gap: 0.5rem; }
+
+        /* --- MODALS --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(17, 24, 39, 0.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal { background-color: var(--bg-dark); padding: 2rem; border-radius: 0.5rem; width: 90%; max-width: 600px; border: 1px solid var(--border-color); }
+        .modal h2 { margin-bottom: 1.5rem; }
+        .modal-actions { margin-top: 2rem; display: flex; justify-content: flex-end; gap: 0.75rem; }
+    </style>
+</head>
+<body>
+
+    <!-- AUTH SCREEN -->
+    <div id="auth-screen" class="screen center-content"> <div id="login-container"> <div class="login-logo"><i class="fas fa-microchip"></i></div> <h1 id="auth-title">Secure Login</h1> <p id="auth-subtitle">Welcome back to Indonesia Kid's panel Gen</p> <div id="auth-form"> <div class="input-group"><label for="email">Email</label><input type="email" id="email" autocomplete="email"></div> <div class="input-group"><label for="password">Password</label><input type="password" id="password" autocomplete="current-password"></div> <div class="input-group" id="confirm-password-group" style="display: none;"><label for="confirm-password">Confirm Password</label><input type="password" id="confirm-password" autocomplete="new-password"></div> <button id="auth-button" class="btn btn-primary" style="width: 100%;">Login</button> </div> <div id="login-error"></div> <a href="#" id="auth-toggle-link" class="auth-toggle-link">Don't have an account? Sign Up</a> </div> </div>
+    
+    <!-- SERVER LIST VIEW -->
+    <div id="server-list-view" class="screen flex-row"> <aside class="sidebar"> <div class="logo"><i class="fas fa-microchip"></i><span>INDONESIA  KID</span></div> <nav><a href="#" class="active"><i class="fas fa-server"></i> <span>My Servers</span></a></nav> <div class="user-info"> <div id="user-email-display" class="text-secondary"></div> <div class="user-actions"><button id="logout-button" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i></button><button id="theme-toggle-btn" class="btn btn-secondary" title="Switch Theme"><i class="fas fa-palette"></i></button></div> </div> </aside> <main class="content-area"> <header> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="toggle-sidebar-btn btn btn-secondary" title="Toggle Menu"><i class="fas fa-bars"></i></button> <h1>My Servers</h1> </div> <button id="create-server-btn" class="btn btn-success"><i class="fas fa-plus"></i> Create Server</button> </header> <div id="server-list-grid"></div> </main> </div>
+
+    <!-- SERVER DETAIL VIEW -->
+    <div id="server-detail-view" class="screen flex-row"> <aside class="sidebar"> <div class="logo"><i class="fas fa-microchip"></i><span>INDONESIA KID</span></div> <nav><a href="#" id="back-to-list-link"><i class="fas fa-arrow-left"></i> <span>Back to Servers</span></a></nav> <div class="user-info"> <div id="user-email-display-detail" class="text-secondary"></div> <div class="user-actions"><button id="logout-button-detail" class="btn btn-danger"><i class="fas fa-sign-out-alt"></i></button><button id="theme-toggle-btn-detail" class="btn btn-secondary" title="Switch Theme"><i class="fas fa-palette"></i></button></div> </div> </aside> <main id="server-detail-content" class="content-area"> <div id="detail-header"> <div style="display: flex; align-items: center; gap: 1rem;"> <button class="toggle-sidebar-btn btn btn-secondary" title="Toggle Menu"><i class="fas fa-bars"></i></button> <h1 id="detail-server-name"></h1> </div> </div> <div id="detail-main"> <div id="detail-controls"></div> <nav id="server-tabs"> <a href="#" class="tab-link active" data-tab="console">Console</a> <a href="#" class="tab-link" data-tab="files">File Manager</a> <a href="#" class="tab-link" data-tab="schedules">Schedules</a> </nav> <div id="tab-content-container"> <div id="console-tab" class="tab-content active"> <div id="console-wrapper"><pre id="console-container"></pre></div> <div id="console-input-container"> <span class="prompt">></span> <input type="text" id="console-input" placeholder="Type a command and press Enter..." autocomplete="off"> </div> </div> <div id="files-tab" class="tab-content"> <div id="file-manager-header"> <label for="file-upload-input" id="upload-label-btn" class="btn btn-primary"><i class="fas fa-upload"></i> <span>Upload</span></label> <input type="file" id="file-upload-input" style="display: none;"> <button id="add-file-btn" class="btn btn-success"><i class="fas fa-plus"></i> New File</button> </div> <div id="file-list-container"></div> </div> <div id="schedules-tab" class="tab-content"> <div id="file-manager-header"> <button id="add-schedule-btn" class="btn btn-success"><i class="fas fa-plus"></i> New Schedule</button> </div> <div id="schedule-list-container"></div> </div> </div> </div> </main> </div>
+
+    <!-- MODALS & FIXED ELEMENTS -->
+    <a id="troubleshoot-link" href="https://wa.me/27712943636" target="_blank"><i class="fab fa-whatsapp"></i><span>Inbox Dev</span></a>
+    <div id="create-server-modal" class="modal-overlay"> <div class="modal"> <h2>Create New Server</h2> <div class="input-group"><label for="new-server-name">Name</label><input type="text" id="new-server-name" placeholder="My Node.js App"></div> <div class="input-group"><label for="new-server-ram">Memory (MB)</label><inputnew-se id="new-server-ram" value="512"></div> <div class="modal-actions"> <button class="btn btn-secondary" data-close>Cancel</button> <button id="confirm-create-btn" class="btn btn-success">Create</button> </div> </div> </div>
+    <div id="add-file-modal" class="modal-overlay"> <div class="modal"> <h2>Create New File</h2> <div class="input-group"><label for="new-file-name">Filename</label><input type="text" id="new-file-name" placeholder="app.js"></div> <div class="modal-actions"> <button class="btn btn-secondary" data-close>Cancel</button> <button id="confirm-add-file-btn" class="btn btn-success">Create</button> </div> </div> </div>
+    <div id="file-editor-modal" class="modal-overlay"> <div class="modal"> <h2 id="file-editor-title"></h2> <div class="input-group"><textarea id="file-editor-content"></textarea></div> <div class="modal-actions"> <button class="btn btn-secondary" data-close>Cancel</button> <button id="confirm-save-file-btn" class="btn btn-success">Save Changes</button> </div> </div> </div>
+    <div id="add-schedule-modal" class="modal-overlay"> <div class="modal"> <h2>New Schedule</h2> <div class="input-group"><label for="new-schedule-cron">Cron Pattern (e.g., 0 4 * * *)</label><input type="text" id="new-schedule-cron" value="* * * * *"></div> <div class="input-group"><label for="new-schedule-task">Task</label><select id="new-schedule-task"><option value="restart">Restart Server</option><option value="backup">Run Backup</option></select></div> <div class="modal-actions"> <button class="btn btn-secondary" data-close>Cancel</button> <button id="confirm-add-schedule-btn" class="btn btn-success">Create Schedule</button> </div> </div> </div>
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        let state = { users: {}, servers: {}, currentUser: null, currentTheme: 'omega' };
+        const DOM = {
+            body: document.body,
+            screens: { auth: document.getElementById('auth-screen'), list: document.getElementById('server-list-view'), detail: document.getElementById('server-detail-view') },
+            auth: { title: document.getElementById('auth-title'), subtitle: document.getElementById('auth-subtitle'), email: document.getElementById('email'), password: document.getElementById('password'), confirmPasswordGroup: document.getElementById('confirm-password-group'), confirmPassword: document.getElementById('confirm-password'), button: document.getElementById('auth-button'), error: document.getElementById('login-error'), toggleLink: document.getElementById('auth-toggle-link') },
+            serverList: { createBtn: document.getElementById('create-server-btn'), grid: document.getElementById('server-list-grid') },
+            serverDetail: { name: document.getElementById('detail-server-name'), controls: document.getElementById('detail-controls'), tabs: document.getElementById('server-tabs'), tabContents: document.querySelectorAll('.tab-content'), console: { container: document.getElementById('console-container'), input: document.getElementById('console-input') }, files: { list: document.getElementById('file-list-container'), uploadInput: document.getElementById('file-upload-input'), uploadLabelBtn: document.getElementById('upload-label-btn') }, schedules: { list: document.getElementById('schedule-list-container'), addBtn: document.getElementById('add-schedule-btn') }, backLink: document.getElementById('back-to-list-link') },
+            modals: { createServer: document.getElementById('create-server-modal'), addFile: document.getElementById('add-file-modal'), fileEditor: document.getElementById('file-editor-modal'), addSchedule: document.getElementById('add-schedule-modal') },
+            buttons: { logout: [document.getElementById('logout-button'), document.getElementById('logout-button-detail')], confirmCreateServer: document.getElementById('confirm-create-btn'), confirmAddFile: document.getElementById('confirm-add-file-btn'), confirmSaveFile: document.getElementById('confirm-save-file-btn'), confirmAddSchedule: document.getElementById('confirm-add-schedule-btn'), sidebarToggles: document.querySelectorAll('.toggle-sidebar-btn'), themeToggles: [document.getElementById('theme-toggle-btn'), document.getElementById('theme-toggle-btn-detail')] },
+            userDisplays: [document.getElementById('user-email-display'), document.getElementById('user-email-display-detail')]
+        };
+        let activeServerId = null, intervals = {}, fileBeingEdited = null;
+
+        const saveState = () => localStorage.setItem('omegaTechPanelData_v4', JSON.stringify(state));
+        const loadState = () => {
+            const loaded = JSON.parse(localStorage.getItem('omegaTechPanelData_v4'));
+            if (loaded) { state = { ...state, ...loaded }; }
+            state.currentUser = localStorage.getItem('omegaTechCurrentUser_v4');
+            applyTheme(state.currentTheme || 'omega');
+        };
+        const applyTheme = (themeName) => { DOM.body.className = `theme-${themeName}`; state.currentTheme = themeName; };
+        const toggleTheme = () => { applyTheme(state.currentTheme === 'omega' ? 'cybernetic' : 'omega'); saveState(); };
+
+        const setLoading = (button, isLoading) => {
+            if (isLoading) {
+                if(!button.dataset.originalHtml) button.dataset.originalHtml = button.innerHTML;
+                button.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
+                button.disabled = true;
+            } else {
+                button.innerHTML = button.dataset.originalHtml;
+                button.disabled = false;
+            }
+        };
+        
+        const navigateTo = (view, serverId = null) => { activeServerId = serverId; Object.values(DOM.screens).forEach(s => s.classList.remove('active')); DOM.screens[view].classList.add('active'); if (view === 'list') renderServerList(); if (view === 'detail') renderServerDetail(); if (view === 'auth') { DOM.auth.email.value = ''; DOM.auth.password.value = ''; DOM.auth.confirmPassword.value = ''; } };
+        const handleLogout = () => { Object.values(intervals).forEach(clearInterval); intervals = {}; state.currentUser = null; localStorage.removeItem('omegaTechCurrentUser_v4'); navigateTo('auth'); };
+        const getUserServers = () => state.servers[state.currentUser] || [];
+        const findServer = (id) => getUserServers().find(s => s.id === id);
+
+        const addLogLine = (serverId, message, type = 'info') => {
+            const server = findServer(serverId); if (!server) return;
+            const timestamp = new Date().toLocaleTimeString();
+            server.consoleLog.push({ timestamp, message, type });
+            if (server.consoleLog.length > 200) server.consoleLog.shift();
+            if (activeServerId === serverId) {
+                const lineEl = document.createElement('div');
+                lineEl.className = `log-line ${type} new-log`;
+                lineEl.innerHTML = `<span class="log-time">${timestamp}</span>${message.replace(/</g, "<").replace(/>/g, ">")}`;
+                DOM.serverDetail.console.container.appendChild(lineEl);
+                DOM.serverDetail.console.container.scrollTop = DOM.serverDetail.console.container.scrollHeight;
+                setTimeout(() => lineEl.classList.remove('new-log'), 500);
+            }
+        };
+        
+        const handleFileUpload = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const isZip = file.name.toLowerCase().endsWith('.zip');
+            if (isZip) {
+                unzipFileReal(file);
+            } else {
+                uploadStandardFile(file);
+            }
+            e.target.value = null;
+        };
+        
+        const uploadStandardFile = (file) => {
+            const server = findServer(activeServerId);
+            const uploadBtn = DOM.serverDetail.files.uploadLabelBtn;
+            setLoading(uploadBtn, true);
+            addLogLine(activeServerId, `Uploading file: ${file.name}...`, 'info');
+            switchTab('console');
+            setTimeout(() => {
+                server.files.push({ id: 'f' + Date.now(), name: file.name, size: file.size, modified: new Date().toISOString(), isDirectory: false, content: 'Uploaded file content is simulated.' });
+                addLogLine(activeServerId, `Successfully uploaded ${file.name}.`, 'success');
+                server.files.sort((a,b) => a.name.localeCompare(b.name));
+                saveState(); renderFileManager(activeServerId);
+                setLoading(uploadBtn, false);
+            }, 1500);
+        };
+
+        const unzipFileReal = (file) => {
+            const server = findServer(activeServerId);
+            const uploadBtn = DOM.serverDetail.files.uploadLabelBtn;
+            setLoading(uploadBtn, true);
+            switchTab('console');
+            addLogLine(activeServerId, `Reading archive: ${file.name}...`, 'warn');
+
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                JSZip.loadAsync(event.target.result).then((zip) => {
+                    addLogLine(activeServerId, `Unzipping ${Object.keys(zip.files).length} items...`, 'info');
+                    Object.keys(zip.files).forEach(filename => {
+                        const zipEntry = zip.files[filename];
+                        server.files.push({
+                            id: 'f' + Date.now() + Math.random(),
+                            name: zipEntry.name,
+                            size: zipEntry._data ? zipEntry._data.uncompressedSize : 0,
+                            modified: zipEntry.date.toISOString(),
+                            isDirectory: zipEntry.dir,
+                            content: ''
+                        });
+                    });
+                    addLogLine(activeServerId, `Successfully unzipped archive.`, 'success');
+                    server.files.sort((a, b) => a.name.localeCompare(b.name));
+                    saveState();
+                    renderFileManager(activeServerId);
+                    setLoading(uploadBtn, false);
+                }).catch(err => {
+                    addLogLine(activeServerId, `Error unzipping file: ${err.message}`, 'error');
+                    setLoading(uploadBtn, false);
+                });
+            };
+            reader.onerror = () => {
+                addLogLine(activeServerId, 'Error reading file.', 'error');
+                setLoading(uploadBtn, false);
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        const renderFileManager = (serverId) => {
+            const server = findServer(serverId);
+            DOM.serverDetail.files.list.innerHTML = '';
+            server.files.forEach(file => {
+                const row = document.createElement('div');
+                row.className = 'file-row';
+                const icon = file.isDirectory ? 'fa-folder' : 'fa-file-alt';
+                let actions = `<button class="btn" onclick="app.deleteFile('${serverId}', '${file.id}')" title="Delete"><i class="fas fa-trash-alt"></i></button>`;
+                if (!file.isDirectory) {
+                    actions = `<button class="btn" onclick="app.openFileEditor('${serverId}', '${file.id}')" title="Edit"><i class="fas fa-pencil-alt"></i></button>` + actions;
+                }
+                row.innerHTML = `<i class="fas ${icon} file-icon"></i><span class="file-name">${file.name}</span>
+                    <span class="file-size">${file.isDirectory ? '--' : (file.size/1024).toFixed(2) + ' KB'}</span>
+                    <span class="file-modified">${new Date(file.modified).toLocaleDateString()}</span>
+                    <div class="file-actions">${actions}</div>`;
+                DOM.serverDetail.files.list.appendChild(row);
+            });
+        };
+
+        const createServer = () => {
+            const createBtn = DOM.buttons.confirmCreateServer;
+            setLoading(createBtn, true);
+            const serverId = 'srv-' + Date.now();
+            const newServer = { id: serverId, name: document.getElementById("new-server-name").value.trim() || 'Untitled Server', status: 'installing', ram: parseInt(document.getElementById("new-server-ram").value) || 512, consoleLog: [], files: [{ id: 'f' + Date.now(), name: 'package.json', size: 256, modified: new Date().toISOString(), isDirectory: false, content: '{\n  "name": "new-app",\n  "version": "1.0.0",\n  "main": "index.js"\n}' }, { id: 'f' + (Date.now() + 1), name: 'index.js', size: 128, modified: new Date().toISOString(), isDirectory: false, content: 'console.log("Server is running!");' }], schedules: [] };
+            
+            setTimeout(() => {
+                getUserServers().unshift(newServer);
+                saveState();
+                renderServerList();
+                closeModal(DOM.modals.createServer);
+                setLoading(createBtn, false);
+                addLogLine(serverId, 'Creating server environment...', 'info');
+                setTimeout(() => { const server = findServer(serverId); if (server) { server.status = 'stopped'; addLogLine(serverId, 'Installation complete.', 'success'); saveState(); renderServerList(); } }, 2000);
+            }, 1000);
+        };
+        const toggleAuthMode = (isLogin = true) => {DOM.auth.title.textContent = isLogin ? 'Secure Login' : 'Create Account'; DOM.auth.subtitle.textContent = isLogin ? 'Welcome back' : 'Get started'; DOM.auth.button.textContent = isLogin ? 'Login' : 'Sign Up'; DOM.auth.toggleLink.textContent = isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Login'; DOM.auth.confirmPasswordGroup.style.display = isLogin ? 'none' : 'block'; DOM.auth.error.textContent = '';};
+        const openModal = (modal) => modal.style.display = 'flex';
+        const closeModal = (modal) => modal.style.display = 'none';
+        const handleAuth = () => {const email = DOM.auth.email.value.trim().toLowerCase(); const password = DOM.auth.password.value; const isLogin = DOM.auth.button.textContent === 'Login'; if (!email || !password) { DOM.auth.error.textContent = 'Email and password cannot be empty.'; return; } if (isLogin) { if (state.users[email] && state.users[email].password === password) { state.currentUser = email; localStorage.setItem('omegaTechCurrentUser_v4', email); saveState(); DOM.userDisplays.forEach(d => d.textContent = state.currentUser); navigateTo('list'); } else { DOM.auth.error.textContent = 'Invalid credentials.'; } } else { const confirmPassword = DOM.auth.confirmPassword.value; if (password !== confirmPassword) { DOM.auth.error.textContent = 'Passwords do not match.'; return; } if (state.users[email]) { DOM.auth.error.textContent = 'An account with this email already exists.'; return; } state.users[email] = { password }; state.servers[email] = []; saveState(); toggleAuthMode(true); DOM.auth.error.textContent = 'Account created! Please log in.'; }};
+        const updateServerStatus = (id, newStatus) => {const server = findServer(id); if (!server || server.status === newStatus) return; if (intervals[id]) { clearInterval(intervals[id]); delete intervals[id]; } server.status = newStatus; const messages = { stopped: { msg: 'Server marked as offline.', type: 'info' }, running: { msg: 'Server marked as online.', type: 'success' }, starting: { msg: 'Server is starting...', type: 'info' } }; addLogLine(id, messages[newStatus].msg, messages[newStatus].type); if (newStatus === 'running') intervals[id] = setInterval(() => addLogLine(id, 'Heartbeat check OK.', 'info'), 15000); saveState(); renderServerDetail();};
+        const restartServer = (id) => {const server = findServer(id); if (!server || server.status === 'starting' || server.status === 'installing') return; addLogLine(id, 'Restart command received...', 'info'); updateServerStatus(id, 'stopped'); setTimeout(() => { updateServerStatus(id, 'starting'); setTimeout(() => updateServerStatus(id, 'running'), 2000); }, 1500);};
+        const deleteServer = (id) => {if (confirm('Delete server?')) { if (intervals[id]) clearInterval(intervals[id]); state.servers[state.currentUser] = getUserServers().filter(s => s.id !== id); saveState(); navigateTo('list'); }};
+        const handleCommand = (e) => {if (e.key !== 'Enter' || !DOM.serverDetail.console.input.value.trim()) return; const command = DOM.serverDetail.console.input.value.trim(); addLogLine(activeServerId, `> ${command}`, 'command'); DOM.serverDetail.console.input.value = ''; setTimeout(() => { let response = `Unknown command. Try 'help'.`; if (findServer(activeServerId).status !== 'running') { response = 'Server is not running.'; } else if (command === 'help') { response = "Available: 'help', 'status', 'say <msg>'"; } else if (command === 'status') { response = `Server is running.`; } else if (command.startsWith('say')) { response = `[Server] ${command.substring(4)}`; } addLogLine(activeServerId, response, 'info'); }, 500);};
+        const addFile = () => {const server = findServer(activeServerId); const fileName = document.getElementById('new-file-name').value.trim(); if (!server || !fileName) return; server.files.push({ id: 'f' + Date.now(), name: fileName, size: 0, modified: new Date().toISOString(), isDirectory: fileName.endsWith('/'), content: '' }); server.files.sort((a,b) => a.name.localeCompare(b.name)); saveState(); renderFileManager(server.id); closeModal(DOM.modals.addFile);};
+        const deleteFile = (serverId, fileId) => {const server = findServer(serverId); const fileName = server.files.find(f => f.id === fileId)?.name; if (confirm(`Delete "${fileName}"?`)) { server.files = server.files.filter(f => f.id !== fileId); saveState(); renderFileManager(serverId); }};
+        const openFileEditor = (serverId, fileId) => {const server = findServer(serverId); const file = server.files.find(f => f.id === fileId); if (!file || file.isDirectory) return; fileBeingEdited = fileId; document.getElementById('file-editor-title').textContent = `Editing: ${file.name}`; document.getElementById('file-editor-content').value = file.content || ``; openModal(DOM.modals.fileEditor);};
+        const saveFileContent = () => {const server = findServer(activeServerId); const file = server.files.find(f => f.id === fileBeingEdited); if (!file) return; file.content = document.getElementById('file-editor-content').value; file.modified = new Date().toISOString(); file.size = file.content.length; saveState(); renderFileManager(activeServerId); closeModal(DOM.modals.fileEditor); addLogLine(activeServerId, `Saved changes to ${file.name}`, 'success');};
+        const simulateNpmInstall = (serverId) => {const button = document.getElementById('install-packages-btn'); setLoading(button, true); switchTab('console'); const logs = [{ t: 500, msg: "npm install started...", type: 'info' }, { t: 1500, msg: "resolving packages...", type: 'info' }, { t: 2500, msg: "fetched 82 packages in 2.3s", type: 'success' }, { t: 3000, msg: "checking install script for 'express'", type: 'info' }, { t: 4000, msg: "found 0 vulnerabilities", type: 'success' }, { t: 4500, msg: "npm install finished.", type: 'success' }, ]; logs.forEach(log => setTimeout(() => addLogLine(serverId, log.msg, log.type), log.t)); setTimeout(() => { setLoading(button, false); }, 5000);};
+        const addSchedule = () => {const server = findServer(activeServerId); const cron = document.getElementById('new-schedule-cron').value.trim(); const task = document.getElementById('new-schedule-task').value; if (!server || !cron) return; server.schedules.push({ id: 'sched-' + Date.now(), cron, task }); saveState(); renderSchedules(server.id); closeModal(DOM.modals.addSchedule);};
+        const deleteSchedule = (serverId, scheduleId) => {const server = findServer(serverId); server.schedules = server.schedules.filter(s => s.id !== scheduleId); saveState(); renderSchedules(serverId);};
+        const renderServerList = () => {DOM.serverList.grid.innerHTML = ''; const servers = getUserServers(); if (servers.length === 0) { DOM.serverList.grid.innerHTML = `<p style="color: var(--text-secondary); grid-column: 1 / -1; text-align: center;">No servers yet.</p>`; return; } servers.forEach(server => { const card = document.createElement('div'); card.className = `server-card status-${server.status}`; card.innerHTML = `<div style="display: flex; justify-content: space-between; align-items: start;"><h3 style="font-size: 1.25rem; font-weight: 600;">${server.name}</h3><div class="status">${server.status}</div></div><p style="color: var(--text-secondary);">${server.ram} MB RAM</p>`; card.onclick = () => navigateTo('detail', server.id); DOM.serverList.grid.appendChild(card); });};
+        const renderServerDetail = () => {const server = findServer(activeServerId); if (!server) { navigateTo('list'); return; } DOM.serverDetail.name.textContent = server.name; const isActionable = server.status === 'running' || server.status === 'stopped'; DOM.serverDetail.controls.innerHTML = `<button class="btn btn-success" ${!isActionable || server.status === 'running' ? 'disabled' : ''} onclick="app.updateServerStatus('${server.id}', 'running')"><i class="fas fa-play"></i> Start</button> <button class="btn btn-danger" ${!isActionable || server.status === 'stopped' ? 'disabled' : ''} onclick="app.updateServerStatus('${server.id}', 'stopped')"><i class="fas fa-stop"></i> Stop</button> <button class="btn btn-primary" ${!isActionable ? 'disabled' : ''} onclick="app.restartServer('${server.id}')"><i class="fas fa-sync-alt"></i> Restart</button> <button id="install-packages-btn" class="btn btn-secondary" onclick="app.simulateNpmInstall('${server.id}')"><i class="fab fa-npm"></i> Install Packages</button> <button class="btn btn-danger" onclick="app.deleteServer('${server.id}')" style="margin-left: auto;"><i class="fas fa-trash-alt"></i></button>`; DOM.serverDetail.console.container.innerHTML = ''; server.consoleLog.forEach(log => addLogLine(server.id, log.message, log.type)); renderFileManager(server.id); renderSchedules(server.id); switchTab('console');};
+        const renderSchedules = (serverId) => {const server = findServer(serverId); DOM.serverDetail.schedules.list.innerHTML = ''; if(!server.schedules.length) { DOM.serverDetail.schedules.list.innerHTML = `<p style="color: var(--text-secondary); text-align: center; padding: 2rem;">No schedules.</p>`; return; } server.schedules.forEach(s => { const row = document.createElement('div'); row.className = 'schedule-row'; row.innerHTML = `<i class="fas fa-clock file-icon"></i><span class="schedule-cron">${s.cron}</span><span class="schedule-task">${s.task === 'restart' ? 'Restart Server' : 'Run Backup'}</span><div class="schedule-actions"><button class="btn" onclick="app.deleteSchedule('${serverId}', '${s.id}')"><i class="fas fa-trash-alt"></i></button></div>`; DOM.serverDetail.schedules.list.appendChild(row); });};
+        const switchTab = (tabName) => {DOM.serverDetail.tabContents.forEach(c => c.classList.remove('active')); document.getElementById(`${tabName}-tab`).classList.add('active'); DOM.serverDetail.tabs.querySelectorAll('.tab-link').forEach(link => { link.classList.toggle('active', link.dataset.tab === tabName); });};
+        
+        const init = () => {
+            window.app = { updateServerStatus, restartServer, deleteServer, deleteFile, openFileEditor, saveFileContent, simulateNpmInstall, deleteSchedule };
+            DOM.auth.toggleLink.addEventListener('click', () => toggleAuthMode(DOM.auth.button.textContent !== 'Login'));
+            DOM.auth.button.addEventListener('click', handleAuth);
+            DOM.buttons.logout.forEach(btn => btn.addEventListener('click', handleLogout));
+            document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(btn.closest('.modal-overlay'))));
+            DOM.buttons.sidebarToggles.forEach(button => { button.addEventListener('click', () => { const activeScreen = document.querySelector('.screen.active.flex-row'); if (activeScreen) activeScreen.classList.toggle('sidebar-collapsed'); }); });
+            DOM.buttons.themeToggles.forEach(btn => btn.addEventListener('click', toggleTheme));
+            DOM.serverList.createBtn.addEventListener('click', () => openModal(DOM.modals.createServer));
+            DOM.buttons.confirmCreateServer.addEventListener('click', createServer);
+            DOM.serverDetail.backLink.addEventListener('click', (e) => { e.preventDefault(); navigateTo('list'); });
+            DOM.serverDetail.tabs.addEventListener('click', (e) => e.target.matches('.tab-link') && switchTab(e.target.dataset.tab));
+            DOM.serverDetail.console.input.addEventListener('keydown', handleCommand);
+            DOM.serverDetail.files.uploadInput.addEventListener('change', handleFileUpload);
+            DOM.serverDetail.schedules.addBtn.addEventListener('click', () => openModal(DOM.modals.addSchedule));
+            document.getElementById('add-file-btn').addEventListener('click', () => openModal(DOM.modals.addFile));
+            DOM.buttons.confirmAddFile.addEventListener('click', addFile);
+            DOM.buttons.confirmSaveFile.addEventListener('click', saveFileContent);
+            DOM.buttons.confirmAddSchedule.addEventListener('click', addSchedule);
+            loadState();
+            if (state.currentUser && state.users[state.currentUser]) { DOM.userDisplays.forEach(d => d.textContent = state.currentUser); navigateTo('list'); } else { navigateTo('auth'); }
+        };
+    
+        init();
+    });
+    </script>
+</body>
+</html>

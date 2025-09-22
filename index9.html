@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>YouTube Song Downloader</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      margin: 0;
+      font-family: monospace;
+      background: #000;
+      color: #0f0;
+      text-align: center;
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    video.bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+      filter: brightness(0.4);
+    }
+
+    #themeBtn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      z-index: 999;
+      padding: 10px 14px;
+      font-size: 14px;
+      background: #111;
+      color: red;
+      border: 2px solid red;
+      border-radius: 5px;
+    }
+
+    #themeBtn:hover {
+      background: red;
+      color: red;
+      cursor: pointer;
+    }
+
+    .container {
+      padding: 60px 20px 40px;
+      max-width: 800px;
+      margin: auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    input, button {
+      padding: 12px 18px;
+      font-size: 18px;
+      margin: 10px auto;
+      background: #111;
+      color: #0f0;
+      border: 2px solid #0f0;
+      border-radius: 5px;
+      width: 90%;
+      max-width: 600px;
+      display: block;
+    }
+
+    button:hover {
+      background: #0f0;
+      color: #000;
+      cursor: pointer;
+    }
+
+    #status, #songTitle {
+      margin-top: 15px;
+      font-size: 16px;
+    }
+
+    audio {
+      margin-top: 20px;
+      width: 90%;
+      max-width: 600px;
+      background: #111;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    audio::-webkit-media-controls-panel {
+      background-color: #111;
+      color: #0f0;
+    }
+
+    #downloadLink {
+      display: block;
+      margin-top: 12px;
+      font-size: 18px;
+      color: #0f0;
+      text-decoration: none;
+    }
+
+    #downloadLink:hover {
+      text-decoration: underline;
+    }
+
+    #suggestions {
+      width: 90%;
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: left;
+      background: #111;
+      border: 1px solid #0f0;
+      border-top: none;
+      color: #0f0;
+      max-height: 200px;
+      overflow-y: auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    #suggestions div {
+      padding: 10px;
+      cursor: pointer;
+      border-bottom: 1px solid #0f0;
+    }
+
+    #suggestions div:hover {
+      background: #0f0;
+      color: #000;
+    }
+
+    /* Light Mode Styles */
+    .light-mode {
+      background: #fff;
+      color: #000;
+    }
+
+    .light-mode input,
+    .light-mode button {
+      background: #eee;
+      color: #000;
+      border-color: #000;
+    }
+
+    .light-mode #suggestions {
+      background: #fff;
+      color: #000;
+      border-color: #000;
+    }
+
+    .light-mode #suggestions div {
+      border-color: #ccc;
+    }
+
+    .light-mode #suggestions div:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    .light-mode #downloadLink {
+      color: #000;
+    }
+
+    .light-mode #themeBtn {
+      background: #eee;
+      color: #000;
+      border-color: #000;
+    }
+
+    .light-mode #themeBtn:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    @media screen and (max-width: 600px) {
+      input, button {
+        font-size: 16px;
+        padding: 10px;
+      }
+
+      #themeBtn {
+        font-size: 12px;
+        padding: 8px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Theme Toggle Button -->
+  <button id="themeBtn" onclick="toggleTheme()">Change Theme </button>
+
+  <!-- Background Video -->
+  <video class="bg-video" autoplay muted loop>
+    <source src="https://cdn.pixabay.com/video/2017/11/06/9320-242082381_large.mp4" type="video/mp4">
+  </video>
+
+  <div class="container">
+    <h1>Paste yt video url here </h1>
+    <input type="text" id="query" placeholder="Enter song name or YouTube URL" />
+    <div id="suggestions"></div>
+    <button onclick="downloadAudio()"CLICK HERE</button>
+    <p id="status"></p>
+    <h2 id="songTitle"></h2>
+    <audio id="player" controls hidden></audio>
+    <a id="downloadLink" href="#" download="audio.mp3" hidden>Download </a>
+  </div>
+
+  <script>
+    const queryInput = document.getElementById("query");
+    const suggestionsBox = document.getElementById("suggestions");
+    const player = document.getElementById("player");
+    const status = document.getElementById("status");
+    const downloadLink = document.getElementById("downloadLink");
+    const songTitle = document.getElementById("songTitle");
+
+    queryInput.addEventListener("input", async () => {
+      const q = queryInput.value.trim();
+      if (!q) {
+        suggestionsBox.innerHTML = '';
+        return;
+      }
+
+      try {
+        const response = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&ds=yt&q=${encodeURIComponent(q)}`);
+        const result = await response.json();
+        const suggestions = result[1];
+        suggestionsBox.innerHTML = suggestions
+          .slice(0, 7)
+          .map(s => `<div onclick="selectSuggestion('${s.replace(/'/g, "\\'")}')">${s}</div>`)
+          .join('');
+      } catch (err) {
+        console.error("Suggestion fetch failed:", err);
+      }
+    });
+
+    function selectSuggestion(text) {
+      queryInput.value = text;
+      suggestionsBox.innerHTML = '';
+    }
+
+    async function downloadAudio() {
+      const query = queryInput.value;
+      status.textContent = "";
+      songTitle.textContent = "";
+      player.hidden = true;
+      downloadLink.hidden = true;
+
+      if (!query.trim()) {
+        status.textContent = "Please enter a valid query.";
+        return;
+      }
+
+      status.textContent = "Processing your request...";
+
+      try {
+        const res = await fetch(`https://ochinpo-helper.hf.space/yt?query=${encodeURIComponent(query)}`);
+        const data = await res.json();
+
+        if (!data.result || !data.result.download || !data.result.download.audio) {
+          status.textContent = "Couldn't fetch audio. Try a different query.";
+          return;
+        }
+
+        const audioUrl = data.result.download.audio;
+        const title = data.result.title || "Unknown Title";
+
+        player.src = audioUrl;
+        player.hidden = false;
+        songTitle.textContent = ` ${title}`;
+
+        downloadLink.href = audioUrl;
+        downloadLink.hidden = false;
+
+        status.textContent = "Audio ready. You can listen or download it.";
+      } catch (e) {
+        console.error(e);
+        status.textContent = "â
+            Error while processing. Try again.";
+      }
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("light-mode");
+    }
+  </script>
+</body>
+</html>
+  </div><a class="back-button" href="index2.html">Click Here</a>
+
+</body>
+</html>

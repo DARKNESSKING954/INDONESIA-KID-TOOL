@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>INDONESIA KID IMAGE GENERATOR</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body, html {
+      height: 100%;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Video background */
+    .video-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    /* Overlay for darkening the video */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      background: linear-gradient(45deg, #ff00cc, #3333ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px #fff; }
+      to { text-shadow: 0 0 20px #ff00cc, 0 0 30px #3333ff; }
+    }
+
+    .glass {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 12px;
+      padding: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+      margin: 20px auto;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      font-size: 16px;
+      background: rgba(255,255,255,0.2);
+      color: #fff;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: #ccc;
+    }
+
+    button {
+      background: linear-gradient(45deg, #ff00cc, #3333ff);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #3333ff, #ff00cc);
+    }
+
+    .images {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+      width: 100%;
+      max-width: 1000px;
+      padding: 20px;
+    }
+
+    .image-card {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+      padding: 10px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .image-card img {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .image-card a {
+      display: inline-block;
+      background: #4caf50;
+      padding: 6px 14px;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .footer {
+      margin: 30px 0;
+      font-size: 14px;
+      color: #ccc;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Video Background -->
+  <video autoplay muted loop class="video-bg">
+    <source src="https://files.catbox.moe/yuhyp5.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+  <div class="overlay"></div>
+
+  <h1>INDONESIA KIDS - Image Generator</h1>
+
+  <div class="glass">
+    <input type="text" id="promptInput" placeholder="Type what you want e.g. Joker, Anime..." />
+    <br>
+    <button onclick="generateImages()">Generate</button>
+  </div>
+
+  <div class="images" id="imageContainer"></div>
+
+  <div class="footer">© 2025 INDONESIA KID'S PRODUCTS. All rights reserved.</div>
+
+  <script>
+    async function generateImages() {
+      const prompt = document.getElementById("promptInput").value.trim();
+      const container = document.getElementById("imageContainer");
+      container.innerHTML = '';
+
+      if (!prompt) {
+        alert("Please enter a prompt!");
+        return;
+      }
+
+      const baseUrl = `https://img.hazex.workers.dev/?prompt=${encodeURIComponent(prompt)}`;
+
+      for (let i = 0; i < 5; i++) {
+        const imageUrl = `${baseUrl}&t=${Date.now()}_${i}`;
+        const card = document.createElement("div");
+        card.className = "image-card";
+
+        const img = document.createElement("img");
+        img.src = imageUrl;
+        img.alt = `Generated Image ${i + 1}`;
+
+        const downloadLink = document.createElement("a");
+        downloadLink.href = imageUrl;
+        downloadLink.download = `image-${i + 1}.jpg`;
+        downloadLink.textContent = "Download";
+
+        card.appendChild(img);
+        card.appendChild(downloadLink);
+        container.appendChild(card);
+      }
+    }
+  </script>
+
+</body>
+</html>

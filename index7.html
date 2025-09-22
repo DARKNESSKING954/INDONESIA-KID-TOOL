@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Profile Card Generator</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet" />
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Orbitron', monospace;
+      background: linear-gradient(135deg, #000000, #0a0f1a);
+      color: #00ffcc;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      text-shadow: 0 0 5px #00ffcc;
+      margin-bottom: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #0a0f1a;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 0 20px #00ffcc44;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      background: #000;
+      border: 1px solid #00ffcc88;
+      color: #00ffcc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input[type="file"] {
+      padding: 10px;
+      color: #fff;
+    }
+
+    .card {
+      margin-top: 30px;
+      padding: 20px;
+      background: #000;
+      border: 1px solid #00ffcc33;
+      border-radius: 15px;
+      text-align: center;
+      box-shadow: 0 0 10px #00ffcc55;
+      position: relative;
+      animation: glow 3s infinite ease-in-out;
+    }
+
+    @keyframes glow {
+      0% { box-shadow: 0 0 10px #00ffaa44; }
+      50% { box-shadow: 0 0 20px #00ffaa99; }
+      100% { box-shadow: 0 0 10px #00ffaa44; }
+    }
+
+    .card img {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #00ffaa;
+      margin-bottom: 15px;
+      box-shadow: 0 0 10px #00ffaa77;
+    }
+
+    .card h2 {
+      margin: 10px 0 5px;
+      color: #00ffaa;
+      font-size: 1.8rem;
+    }
+
+    .card p {
+      font-size: 15px;
+      color: #ccc;
+      line-height: 1.5;
+      padding: 0 10px;
+    }
+
+    .card .watermark {
+      position: absolute;
+      bottom: 10px;
+      right: 15px;
+      font-size: 12px;
+      color: #444;
+      opacity: 0.6;
+    }
+
+    #cardPreview {
+      background: inherit;
+      color: inherit;
+    }
+
+    .button {
+      padding: 12px;
+      width: 100%;
+      background: #00ffcc;
+      border: none;
+      color: #000;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .button:hover {
+      background: #00ffaa;
+      box-shadow: 0 0 10px #00ffaa, 0 0 20px #00ffaa;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 40px;
+      font-size: 13px;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Profile Card Generator</h1>
+  <div class="container">
+    <input type="text" id="name" placeholder="Enter your name" />
+    <textarea id="bio" rows="3" placeholder="Write a short bio..."></textarea>
+    <input type="file" id="photoInput" accept="image/*" />
+    <button class="button" onclick="generateCard()">Generate Card</button>
+    <button class="button" onclick="downloadCard()" style="display:none;" id="downloadBtn">Download Card</button>
+
+    <div class="card" id="cardPreview" style="display:none;">
+      <img id="profilePic" src="" alt="Profile" />
+      <h2 id="cardName">Your Name</h2>
+      <p id="cardBio">Your bio will appear here...</p>
+      <div class="watermark">Indonesia kid products</div>
+    </div>
+  </div>
+
+  <div class="footer">
+     Built by Indonesia kid  Style your presence. Capture your profile.
+  </div>
+
+  <script>
+    function generateCard() {
+      const name = document.getElementById("name").value;
+      const bio = document.getElementById("bio").value;
+      const imgInput = document.getElementById("photoInput");
+      const card = document.getElementById("cardPreview");
+      const cardName = document.getElementById("cardName");
+      const cardBio = document.getElementById("cardBio");
+      const profilePic = document.getElementById("profilePic");
+      const downloadBtn = document.getElementById("downloadBtn");
+
+      if (name.trim() === "" || bio.trim() === "" || !imgInput.files[0]) {
+        alert("Please fill all fields and select a photo.");
+        return;
+      }
+
+      cardName.textContent = name;
+      cardBio.textContent = bio;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        profilePic.src = e.target.result;
+        card.style.display = "block";
+        downloadBtn.style.display = "block";
+      };
+      reader.readAsDataURL(imgInput.files[0]);
+    }
+
+    function downloadCard() {
+      const card = document.getElementById("cardPreview");
+      html2canvas(card, {
+        scale: 2,
+        useCORS: true
+      }).then(canvas => {
+        const link = document.createElement("a");
+        link.download = "profile_card.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+      });
+    }
+  </script>
+</body>
+</html>

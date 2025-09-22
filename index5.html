@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Background Remover - Fullscreen</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+      overflow-x: hidden;
+      color: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: background-image 1s ease-in-out;
+      z-index: -1;
+      animation: fadeIn 2s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      text-align: center;
+      margin: 20px 0 10px;
+      animation: glitch 2s infinite;
+    }
+
+    @keyframes glitch {
+      0%, 100% { text-shadow: 2px 0 red, -2px 0 cyan; }
+      20% { text-shadow: -2px 0 red, 2px 0 cyan; }
+      40% { text-shadow: 4px 0 red, -4px 0 cyan; }
+      60% { text-shadow: -1px 0 red, 1px 0 cyan; }
+      80% { text-shadow: 1px 0 red, -1px 0 cyan; }
+    }
+
+    .main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      width: 90%;
+      max-width: 700px;
+      box-shadow: 0 0 25px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    input[type="file"], button {
+      padding: 12px;
+      margin: 14px 0;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 300px;
+      transition: all 0.3s ease;
+    }
+
+    input[type="file"] {
+      background: white;
+      color: black;
+    }
+
+    button {
+      background: linear-gradient(to right, #00f2fe, #4facfe);
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+    }
+
+    button:hover {
+      background: linear-gradient(to right, #43e97b, #38f9d7);
+      transform: scale(1.05);
+    }
+
+    img {
+      margin-top: 20px;
+      max-width: 100%;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .img-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .note {
+      font-size: 14px;
+      color: #fff;
+      opacity: 0.7;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="background"></div>
+
+  <h1> AI BACKGROUND REMOVER </h1>
+
+  <div class="main">
+    <div class="container">
+      <input type="file" id="fileInput" accept="image/*">
+      <button onclick="removeBackground()">Remove Background</button>
+
+      <div class="img-box" id="previewBox"></div>
+      <div class="img-box" id="resultBox"></div>
+
+      <p class="note">INDONESIA | KID| AI MAGIC ¨</p>
+    </div>
+  </div>
+
+  <script>
+    const previewBox = document.getElementById('previewBox');
+    const resultBox = document.getElementById('resultBox');
+
+    document.getElementById('fileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        previewBox.innerHTML = `
+          <p>Original Image:</p>
+          <img src="${event.target.result}" alt="Original Image">
+        `;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    async function removeBackground() {
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files[0]) {
+        alert("Please upload an image first.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image_file', fileInput.files[0]);
+      formData.append('size', 'auto');
+
+      resultBox.innerHTML = "<p>Processing image... â³</p>";
+
+      try {
+        const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+          method: 'POST',
+          headers: { 'X-Api-Key': 'y3k5SHjcVaAQTCVGKioseQs8' },
+          body: formData
+        });
+
+        if (!response.ok) throw new Error("API Error");
+
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+
+        resultBox.innerHTML = `
+          <p>â¨ Background Removed:</p>
+          <img src="${url}" alt="Processed Image">
+          <a href="${url}" download="no-background.png">
+            <button>â¬ï¸ Download Image</button>
+          </a>
+        `;
+      } catch (err) {
+        resultBox.innerHTML = `<p style="color: red;">Failed: ${err.message}</p>`;
+      }
+    }
+
+    const bgImages = [
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb",
+      "https://images.unsplash.com/photo-1549921296-3b4a5d8b9525",
+      "https://images.unsplash.com/photo-1618005198919-d3d4f83c1d5a",
+      "https://images.unsplash.com/photo-1610878180933-c3b2ff1033cf"
+    ];
+
+    let current = 0;
+    const background = document.getElementById('background');
+
+    function changeBackground() {
+      background.style.backgroundImage = `url('${bgImages[current]}?auto=compress&crop=center&fit=crop&h=1000&w=1600')`;
+      current = (current + 1) % bgImages.length;
+    }
+
+    changeBackground();
+    setInterval(changeBackground, 7000);
+  </script>
+
+</body>
+</html>
