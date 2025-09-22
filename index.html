@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDONESIA KID'S PROJECT SUPPORT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            font-family: 'Poppins', sans-serif;
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+        }
+        .premium-container {
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.5);
+        }
+        .premium-header .greeting {
+            font-size: 1.5rem;
+            color: #00f5ff;
+        }
+        .menu-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00f5ff;
+            margin: 20px 0;
+        }
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .menu-item {
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 20px #00f5ff;
+            background: rgba(255,255,255,0.12);
+        }
+        .menu-item-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .item-icon i {
+            font-size: 1.8rem;
+            color: #00f5ff;
+        }
+        .item-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .item-desc {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+        .premium-footer, .copyright {
+            text-align: center;
+            color: #aaa;
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        .social-links a {
+            color: #00f5ff;
+            margin: 0 8px;
+            font-size: 1.2rem;
+            transition: color 0.3s;
+        }
+        .social-links a:hover {
+            color: #fff;
+        }
+        .menu-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px; /* Changed from left to right */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 25px;
+    cursor: pointer;
+    z-index: 9999;
+}
+
+.menu-toggle div {
+    background-color: #00f5ff;
+    height: 4px;
+    border-radius: 2px;
+}
+
+   #side-menu {
+    position: fixed;
+    top: 0;
+    right: -200px;
+    width: 200px;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(10px);
+    transition: right 0.3s ease;
+    z-index: 999;
+    padding-top: 60px;
+}
+
+#side-menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+#side-menu li {
+    padding: 15px;
+    text-align: center;
+}
+
+#side-menu a {
+    color: #00f5ff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#side-menu a:hover {
+    color: #fff;
+}
+
+        .learn-btn {
+  background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 16px;
+  border-radius: 50px;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.learn-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.3);
+}
+        
+    </style>
+</head>
+<body>
+ 
+  <video autoplay muted loop playsinline id="bg-video" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; object-fit: cover;">
+    <source src="https://files.catbox.moe/lai1jq.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+    
+<script>
+
+  const text = "WELCOME TO INDONESIA KID MODDERS APP";
+  const typingElement = document.getElementById('typing-text');
+  let index = 0;
+
+  function type() {
+    if (index < text.length) {
+      typingElement.textContent += text.charAt(index);
+      index++;
+      setTimeout(type, 150);
+    }
+  }
+
+  type();
+</script>
+        
+    <div class="premium-container">
+        <div class="premium-header">
+            <div class="header-info">
+                <div class="greeting" id="greeting">Welcome</div>
+                <div class="datetime" id="datetime">Loading...</div>
+            </div>
+        </div>
+
+   <div id="visitor-count" style="margin: 10px 0; font-weight: bold; color: #00f5ff;">
+    Visitors Online: <span id="visitorNumber">0</span>
+</div>
+
+<script>
+    // Simulated random number of visitors online
+    function updateVisitorCount() {
+        const visitorNumber = Math.floor(Math.random() * 50) + 5; // between 5 and 54
+        document.getElementById('visitorNumber').textContent = visitorNumber;
+    }
+
+    updateVisitorCount();
+    setInterval(updateVisitorCount, 10000); // update every 10 seconds
+</script>
+
+<div id="system-info" style="margin: 10px 0; font-weight: bold; color: #00f5ff;">
+    Your System Info: <span id="sysInfo"></span>
+</div>
+
+<script>
+    function getSystemInfo() {
+        const platform = navigator.platform;
+        const userAgent = navigator.userAgent;
+        const browser = (() => {
+            if (userAgent.indexOf("Chrome") > -1) return "Chrome";
+            if (userAgent.indexOf("Safari") > -1) return "Safari";
+            if (userAgent.indexOf("Firefox") > -1) return "Firefox";
+            if (userAgent.indexOf("MSIE") > -1 || !!document.documentMode) return "IE";
+            return "Unknown Browser";
+        })();
+        return `Platform: ${platform}, Browser: ${browser}`;
+    }
+
+    document.getElementById('sysInfo').textContent = getSystemInfo();
+</script>
+
+        <div class="menu-title">INDONESIA KID PROJECT SUPPORT </div>
+<div class="menu-grid">
+    <div class="menu-item" onclick="window.location.href='index2.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-magic"></i></div>
+            <div>
+                <div class="item-name">AUTO ENHANCE</div>
+                <div class="item-desc">One-click AI optimization for photos or data.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index3.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-server"></i></div>
+            <div>
+                <div class="item-name">PANEL</div>
+                <div class="item-desc">Create servers and host bot free.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index4.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-font"></i></div>
+            <div>
+                <div class="item-name">TEXT+ TOOL</div>
+                <div class="item-desc">Place and style text with 20+ fonts.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index5.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-eraser"></i></div>
+            <div>
+                <div class="item-name">BACKGROUND MAGIC</div>
+                <div class="item-desc">Erase, blur, or replace backgrounds easily.</div>
+            </div>
+        </div>https://localhost/#
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index6.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-robot"></i></div>
+            <div>
+                <div class="item-name">AI ASSISTANT</div>
+                <div class="item-desc">I'm an assistant AI chatbot created by INDONESIA KID community.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index7.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-image"></i></div>
+            <div>
+                <div class="item-name">I'D GENERATOR</div>
+                <div class="item-desc">Create any developer ID by uploading picture, name and description.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index8.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-code"></i></div>
+            <div>
+                <div class="item-name">WEB SNIFFER</div>
+                <div class="item-desc">Steal any website codes here just paste link https://.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index9.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-key"></i></div>
+            <div>
+                <div class="item-name">MUSIC DOWNLOADER AND YT VIDs</div>
+                <div class="item-desc">Download ur favorite tracks and ur fav vids on yt.</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index10.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-pencil"></i></div>
+            <div>
+                <div class="item-name">ANIME GENERATOR</div>
+                <div class="item-desc">Use this tool to create any image you'd like</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="menu-item" onclick="window.location.href='index11.html'">
+        <div class="menu-item-content">
+            <div class="item-icon"><i class="fas fa-fire"></i></div>
+            <div>
+                <div class="item-name">PORN GENERATOR</div>
+                <div class="item-desc">Generate explicit content with this tool</div>
+            </div>
+        </div>
+    </div>
+    <div class="menu-item" onclick="window.location.href='index100.html'">
+    <div class="menu-item-content">
+        <div class="item-icon"><i class="fas fa-tools"></i></div>
+        <div>
+            <div class="item-name">HACKS</div>
+            <div class="item-desc">Hack Tools - Use Wisely.</div>
+        </div>
+    </div>
+    </div>
+</div>
+        <div class="premium-footer">
+            <div>PREMIUM SYSTEM ACTIVE</div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-tiktok"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="copyright">
+                &copy; <span id="current-year"></span> Indonesia kid's Projects | All rights reserved.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
+    <script>
+    function updateGreeting() {
+        const now = new Date();
+        const hour = now.getHours();
+        let greeting = 'Welcome';
+
+        if (hour < 12) {
+            greeting = 'WELCOME';
+        } else if (hour < 18) {
+            greeting = 'GO DOWN TO SELECT THE OPTIONS';
+        } else {
+            greeting = 'PLZ SUPPORT INDONESIA KIDS PROJECTS ';
+        }
+        document.getElementById('greeting').textContent = greeting;
+    }
+
+    function updateTime() {
+        const now = new Date();
+        document.getElementById('datetime').textContent = now.toLocaleTimeString();
+    }
+
+    function updateBattery() {
+        if ('getBattery' in navigator) {
+            navigator.getBattery().then(battery => {
+                function batteryInfo() {
+                    const level = Math.round(battery.level * 100);
+                    const status = battery.charging ? ' Charging' : ' Not Charging';
+                    document.getElementById('battery').textContent = `Battery: ${level}% - ${status}`;
+                }
+                batteryInfo();
+                battery.addEventListener('levelchange', batteryInfo);
+                battery.addEventListener('chargingchange', batteryInfo);
+            });
+        } else {
+            document.getElementById('battery').textContent = 'Battery info not supported';
+        }
+    }
+
+    updateGreeting();
+    updateTime();
+    setInterval(updateTime, 1000);
+    updateBattery();
+    
+</script>
+
+<div id="battery" style="margin-top:10px; color: #ccc;"></div>
+</body>
+</html> 
