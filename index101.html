@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp Hack Tool v1.0 (Prank)</title>
+<style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: black;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .app-container {
+      width: 375px;
+      height: 667px;
+      background: #000;
+      border: 2px solid #444;
+      border-radius: 20px;
+      box-shadow: 0 0 25px rgba(0,255,0,0.5);
+      overflow: hidden;
+      position: relative;
+    }
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+    .content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      text-align: center;
+      color: #00ff00;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 10px;
+      border: 2px solid red;
+    }
+    h1 {
+      text-shadow: 0 0 10px red, 0 0 25px red;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+    .box {
+      background: rgba(0,0,0,0.7);
+      border: 2px solid red;
+      padding: 15px;
+      border-radius: 10px;
+      width: 100%;
+      box-shadow: 0 0 15px red;
+      text-align: center;
+      box-sizing: border-box;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px 15px;
+      margin: 8px 0;
+      background: transparent;
+      color: #00ff00;
+      font-weight: bold;
+      border: 2px solid red;
+      border-radius: 8px;
+      outline: none;
+      font-size: 0.9em;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    input:hover, button:hover {
+      background: rgba(255,0,0,0.1);
+      transform: translateY(-2px);
+    }
+    .glitch-log {
+      font-size: 0.75em;
+      color: #00ff00;
+      text-align: left;
+      margin-top: 10px;
+      background: #111;
+      padding: 8px;
+      border: 1px dashed red;
+      border-radius: 6px;
+      max-width: 100%;
+      display: none;
+      white-space: pre-line;
+    }
+    .final-message {
+      margin-top: 12px;
+      font-weight: bold;
+      color: red;
+      animation: blink 1s infinite;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    footer {
+      position: absolute;
+      bottom: 5px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.75em;
+      color: white;
+      text-shadow: 0 0 10px white;
+    }
+</style>
+</head>
+<body>
+
+<div class="app-container">
+  <canvas id="matrixCanvas"></canvas>
+
+  <div class="content">
+    <img src="https://files.catbox.moe/fzthai.png" alt="Logo" class="logo">
+    <h1>WhatsApp Hack Tool v3.0</h1>
+    <div class="box">
+      <p>Enter target WhatsApp number:</p>
+      <input type="text" id="number" placeholder="+2767XXXXXXX" />
+      <button onclick="startHack()">Start Hack</button>
+
+      <button onclick="window.open('https://whatsapp.com/channel/0029Vb4HUnJAjPXOWnELU82J', '_blank')"> Join Channel</button>
+      <button onclick="window.open('https://wa.me/27665321966', '_blank')">Contact Developer</button>
+      <button onclick="window.open('########', '_blank')">Become Premium User</button>
+
+      <div id="loading" style="display:none;">
+        <p id="status">Initializing...</p>
+      </div>
+
+      <div class="glitch-log" id="glitchLog"></div>
+      <p id="final" class="final-message" style="display: none;"></p>
+    </div>
+  </div>
+
+  <footer>Â© INDONESIA KID_INDO7</footer>
+</div>
+
+<script>
+// Matrix Background
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas() {
+  canvas.width = 375;
+  canvas.height = 667;
+}
+resizeCanvas();
+
+const letters = '½ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = Array.from({length: columns}).map(() => 1);
+
+function drawMatrix() {
+  ctx.fillStyle = 'rgba(0,0,0,0.05)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = '#0F0';
+  ctx.font = fontSize + 'px monospace';
+
+  drops.forEach((y, index) => {
+    const text = letters.charAt(Math.floor(Math.random() * letters.length));
+    const x = index * fontSize;
+    ctx.fillText(text, x, y * fontSize);
+
+    if (y * fontSize > canvas.height && Math.random() > 0.975) {
+      drops[index] = 0;
+    }
+    drops[index]++;
+  });
+}
+setInterval(drawMatrix, 35);
+
+// Logic for hack simulation
+function generateCaptcha(length = 5) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  return Array.from({length}, () => chars.charAt(Math.floor(Math.random() * chars.length))).join('');
+}
+
+function startHack() {
+  const number = document.getElementById("number").value.trim();
+  const loading = document.getElementById("loading");
+  const status = document.getElementById("status");
+  const final = document.getElementById("final");
+  const glitchLog = document.getElementById("glitchLog");
+
+  final.style.display = "none";
+  glitchLog.style.display = "none";
+
+  if (!number) {
+    alert("Please enter a WhatsApp number.");
+    return;
+  }
+
+  loading.style.display = "block";
+  status.innerText = "Connecting to WhatsApp servers...";
+
+  setTimeout(() => { status.innerText = "Attempting bypass..."; }, 2000);
+  setTimeout(() => { status.innerText = "Checking encryption protocols..."; }, 4000);
+  setTimeout(() => { status.innerText = "Requesting authorization..."; }, 6000);
+
+  setTimeout(() => {
+    const apiKey = prompt("Enter your private API key:");
+    if (!apiKey || !apiKey.startsWith("WHATSAPP~")) {
+      loading.style.display = "none";
+      final.style.display = "block";
+      final.innerHTML = "â Invalid or missing API key. Process aborted.";
+      return;
+    }
+
+    status.innerText = "Validating API key...";
+    setTimeout(() => {
+      const captcha = generateCaptcha();
+      const input = prompt("ð¡ï¸ CAPTCHA: Type this code to proceed: " + captcha);
+      if (input !== captcha) {
+        loading.style.display = "none";
+        final.style.display = "block";
+        final.innerHTML = "â CAPTCHA failed. Access denied.";
+        return;
+      }
+
+      status.innerText = "Finalizing session...";
+      setTimeout(() => {
+        loading.style.display = "none";
+        glitchLog.style.display = "block";
+
+        const randomCode = Math.floor(100000 + Math.random() * 900000);
+        const randomSession = Math.random().toString(36).substring(2, 10).toUpperCase();
+        const randomToken = Math.random().toString(36).substring(2, 18);
+
+        glitchLog.innerText =
+          "[+] Key accepted: " + apiKey + "\n" +
+          "[+] Connected to secure node...\n" +
+          "[+] Exploit injected...\n" +
+          "[+] Session Code: " + randomSession + "\n" +
+          "[+] Token ID: " + randomToken + "\n" +
+          "[+] Your WhatsApp code is: " + randomCode + "\n" +
+          "[+] Admin access granted âï¸";
+
+        final.style.display = "block";
+        final.innerHTML = "â Admin Panel Ready.<br>Access Initialized.";
+      }, 2000);
+    }, 2000);
+  }, 8000);
+}
+</script>
+
+</body>
+</html>

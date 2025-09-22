@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Internalizing Hacks</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      color: white;
+      overflow-x: hidden;
+      position: relative;
+    }
+    video.bg-video {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+    .loading-screen {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+    .slogan {
+      font-size: 20px;
+      margin-top: 10px;
+      color: #ff0055;
+    }
+    .content {
+      display: none;
+      padding: 20px;
+    }
+    .social-item {
+      background: rgba(0,0,0,0.6);
+      margin-bottom: 15px;
+      border-radius: 10px;
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+    .social-item img {
+      width: 70px;
+      height: 70px;
+      border-radius: 10px;
+    }
+    .social-info {
+      flex-grow: 1;
+    }
+    .social-name {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .social-desc {
+      font-size: 14px;
+      color: #ccc;
+    }
+    .open-btn {
+      background: #00ff88;
+      border: none;
+      color: #000;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .open-btn:hover {
+      background: #00cc66;
+    }
+  </style>
+</head>
+<body>
+
+<video class="bg-video" autoplay muted loop>
+  <source src="https://files.catbox.moe/dlxz5b.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<div class="loading-screen" id="loadingScreen">
+  Loading...
+  <div class="slogan">Internalizing Hacks</div>
+</div>
+
+<div class="content" id="mainContent">
+
+  <div class="social-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" alt="Facebook Icon">
+    <div class="social-info">
+      <div class="social-name">Facebook</div>
+      <div class="social-desc">Unlock hidden insights and exploit advanced Facebook features.</div>
+    </div>
+    <button class="open-btn" onclick="window.location.href='facebook.html'">Hack Facebook</button>
+  </div>
+
+  <div class="social-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp Icon">
+    <div class="social-info">
+      <div class="social-name">WhatsApp</div>
+      <div class="social-desc">Access private tweaks, monitoring options & stealth features for WhatsApp.</div>
+    </div>
+    <button class="open-btn" onclick="window.location.href='index101.html'">Hack WhatsApp</button>
+  </div>
+
+  <div class="social-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" alt="Instagram Icon">
+    <div class="social-info">
+      <div class="social-name">Instagram</div>
+      <div class="social-desc">Discover backdoor access and engagement tricks on Instagram.</div>
+    </div>
+    <button class="open-btn" onclick="window.location.href='index152.html'">Hack Instagram</button>
+  </div>
+
+  <div class="social-item">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" alt="Telegram Icon">
+    <div class="social-info">
+      <div class="social-name">Telegram</div>
+      <div class="social-desc">Bypass limits & apply enhanced privacy features on Telegram.</div>
+    </div>
+    <button class="open-btn" onclick="window.location.href='index153.html'">Hack Telegram</button>
+  </div>
+
+</div>
+
+<script>
+  // Auto hide loading after 3 seconds
+  setTimeout(() => {
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'block';
+  }, 3000);
+</script>
+
+</body>
+</html>
